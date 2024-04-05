@@ -51,3 +51,33 @@ class StudentForm(forms.ModelForm):
             raise forms.ValidationError("File type is not supported. Only JPG, JPEG, PNG, and GIF are allowed.")
 
         return photo
+
+    # def save(self, commit=True):
+    #     data = self.cleaned_data()
+    #     return obj
+
+
+class ContactForm(forms.Form):
+    name = forms.CharField()
+    email = forms.EmailField()
+    phoneNumber = forms.CharField()
+    url = forms.URLField()
+    feedback = forms.CharField(widget=forms.Textarea)
+
+    def clean(self):
+        data = super().clean()
+        print("data in form clean method==> ", data)
+        name = data.get('name')
+        errors = {}
+        if name and not name.isalpha():
+            errors['name'] = "This field can't contain digits"
+            # raise forms.ValidationError()
+
+        phone_number = data.get('phoneNumber')
+        if phone_number and not phone_number.isnumeric():
+            errors['phoneNumber'] = "This field can contain only digits."
+
+        if errors:
+            raise forms.ValidationError(errors)
+        return data
+
